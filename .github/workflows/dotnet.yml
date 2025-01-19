@@ -57,14 +57,14 @@ jobs:
 
     - name: Compress Artifacts (Windows)
       if: matrix.os == 'windows-latest'
-      run: Compress-Archive -Path .\publish\* -DestinationPath ConApp1Net8ActionBuildTest-windows.zip
+      run: Compress-Archive -Path .\publish\* -DestinationPath cstut1PANTY-windows.zip
 
     - name: Compress Artifacts (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        mkdir -p ConApp1Net8ActionBuildTest-linux
-        cp -r ./publish/* ConApp1Net8ActionBuildTest-linux/
-        tar -czvf ConApp1Net8ActionBuildTest-linux.tar.gz ConApp1Net8ActionBuildTest-linux
+        mkdir -p cstut1PANTY-linux
+        cp -r ./publish/* cstut1PANTY-linux/
+        tar -czvf cstut1PANTY-linux.tar.gz cstut1PANTY-linux
 
     - name: Clean Up (Optional)
       shell: pwsh  # Use PowerShell Core
@@ -78,10 +78,10 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ConApp1Net8ActionBuildTest-${{ matrix.os }}
+        name: cstut1PANTY-${{ matrix.os }}
         path: |
-          ConApp1Net8ActionBuildTest-windows.zip
-          ConApp1Net8ActionBuildTest-linux.tar.gz
+          cstut1PANTY-windows.zip
+          cstut1PANTY-linux.tar.gz
 
   release:
     needs: build
@@ -99,12 +99,12 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ConApp1Net8ActionBuildTest-v${{ github.run_number }}
-        name: ConApp1Net8ActionBuildTest Release v${{ github.run_number }}
+        tag_name: cstut1PANTY-v${{ github.run_number }}
+        name: cstut1PANTY Release v${{ github.run_number }}
         draft: false
         prerelease: false
         files: |
-          ./artifacts/ConApp1Net8ActionBuildTest-windows-latest/ConApp1Net8ActionBuildTest-windows.zip
-          ./artifacts/ConApp1Net8ActionBuildTest-ubuntu-latest/ConApp1Net8ActionBuildTest-linux.tar.gz
+          ./artifacts/cstut1PANTY-windows-latest/cstut1PANTY-windows.zip
+          ./artifacts/cstut1PANTY-ubuntu-latest/cstut1PANTY-linux.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
