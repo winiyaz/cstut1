@@ -53,18 +53,64 @@ jobs:
       if: always()
 
     - name: Publish Standalone Executable
-      run: dotnet publish --configuration Release -r ${{ matrix.runtime }} --self-contained -o ./publish
+      run: dotnet publish --configuration Release -r ${{ matrix.runtime }} --self-contained -o ./publish /p:PublishTrimmed=true /p:TrimMode=link
+
+    - name: Clean Up Unnecessary Files (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        # Remove unnecessary files (e.g., .pdb, .xml)
+        Remove-Item -Recurse -Force ./publish/*.pdb
+        Remove-Item -Recurse -Force ./publish/*.xml
+        # Ensure only the executable and its dependencies remain
+        Get-ChildItem -Path ./publish -Exclude "*.exe", "*.dll", "*.so", "*.dylib", "*.json", "*.config" | Remove-Item -Recurse -Force
+
+    - name: Clean Up Unnecessary Files (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        # Remove unnecessary files (e.g., .pdb, .xml)
+        find ./publish -name "*.pdb" -delete
+        find ./publish -name "*.xml" -delete
+        # Ensure only the executable and its dependencies remain
+        find ./publish -type f ! -name "*.exe" ! -name "*.dll" ! -name "*.so" ! -name "*.dylib" ! -name "*.json" ! -name "*.config" -delete
+
+    - name: Install UPX (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y upx
+
+    - name: Compress Executable with UPX (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        upx --best ./publish/YourAppName  # Replace "YourAppName" with the name of your executable
+
+    - name: Install UPX (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        # Download UPX for Windows
+        Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v4.0.2/upx-4.0.2-win64.zip" -OutFile upx.zip
+        Expand-Archive -Path upx.zip -DestinationPath upx
+        # Add UPX to PATH
+        echo "$env:GITHUB_WORKSPACE\upx\upx-4.0.2-win64" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - name: Compress Executable with UPX (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        upx --best ./publish/YourAppName.exe  # Replace "YourAppName" with the name of your executable
 
     - name: Compress Artifacts (Windows)
       if: matrix.os == 'windows-latest'
-      run: Compress-Archive -Path .\publish\* -DestinationPath cstut1PANTY-windows.zip
+      shell: pwsh
+      run: |
+        Compress-Archive -Path ./publish/* -DestinationPath cstutPantySmells-windows.zip
 
     - name: Compress Artifacts (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        mkdir -p cstut1PANTY-linux
-        cp -r ./publish/* cstut1PANTY-linux/
-        tar -czvf cstut1PANTY-linux.tar.gz cstut1PANTY-linux
+        tar -czvf cstutPantySmells-linux.tar.gz -C ./publish .
 
     - name: Clean Up (Optional)
       shell: pwsh  # Use PowerShell Core
@@ -78,10 +124,10 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: cstut1PANTY-${{ matrix.os }}
+        name: cstutPantySmells-${{ matrix.os }}
         path: |
-          cstut1PANTY-windows.zip
-          cstut1PANTY-linux.tar.gz
+          cstutPantySmells-windows.zip
+          cstutPantySmells-linux.tar.gz
 
   release:
     needs: build
@@ -99,12 +145,12 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: cstut1PANTY-v${{ github.run_number }}
-        name: cstut1PANTY Release v${{ github.run_number }}
+        tag_name: cstutPantySmells-v${{ github.run_number }}
+        name: cstutPantySmells Release v${{ github.run_number }}
         draft: false
         prerelease: false
         files: |
-          ./artifacts/cstut1PANTY-windows-latest/cstut1PANTY-windows.zip
-          ./artifacts/cstut1PANTY-ubuntu-latest/cstut1PANTY-linux.tar.gz
+          ./artifacts/cstutPantySmells-windows-latest/cstutPantySmells-windows.zip
+          ./artifacts/cstutPantySmells-ubuntu-latest/cstutPantySmells-linux.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
