@@ -61,11 +61,6 @@ jobs:
         ls -R ./publish  # For Linux
         # dir ./publish /s  # For Windows (uncomment if needed)
 
-    - name: Ensure Execute Permissions (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        chmod +x ./publish/cstut1
-
     - name: Clean Up Unnecessary Files (Windows)
       if: matrix.os == 'windows-latest'
       shell: pwsh
@@ -84,45 +79,6 @@ jobs:
         find ./publish -name "*.xml" -delete
         # Ensure only the executable and its dependencies remain
         find ./publish -type f ! -name "*.exe" ! -name "*.dll" ! -name "*.so" ! -name "*.dylib" ! -name "*.json" ! -name "*.config" -delete
-
-    - name: Install UPX (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y upx
-
-    - name: Compress Executable with UPX (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        # Use the absolute path to the executable
-        if [ -f "$GITHUB_WORKSPACE/publish/cstut1" ]; then
-          upx --best "$GITHUB_WORKSPACE/publish/cstut1"
-        else
-          echo "Error: Executable '$GITHUB_WORKSPACE/publish/cstut1' not found!"
-          exit 1
-        fi
-
-    - name: Install UPX (Windows)
-      if: matrix.os == 'windows-latest'
-      shell: pwsh
-      run: |
-        # Download UPX for Windows
-        Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v4.0.2/upx-4.0.2-win64.zip" -OutFile upx.zip
-        Expand-Archive -Path upx.zip -DestinationPath upx
-        # Add UPX to PATH
-        echo "$env:GITHUB_WORKSPACE\upx\upx-4.0.2-win64" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-    - name: Compress Executable with UPX (Windows)
-      if: matrix.os == 'windows-latest'
-      shell: pwsh
-      run: |
-        # Use the absolute path to the executable
-        if (Test-Path -Path "$env:GITHUB_WORKSPACE\publish\cstut1.exe") {
-          upx --best "$env:GITHUB_WORKSPACE\publish\cstut1.exe"
-        } else {
-          Write-Host "Error: Executable '$env:GITHUB_WORKSPACE\publish\cstut1.exe' not found!"
-          exit 1
-        }
 
     - name: Compress Artifacts (Windows)
       if: matrix.os == 'windows-latest'
