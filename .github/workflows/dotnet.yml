@@ -55,6 +55,11 @@ jobs:
     - name: Publish Standalone Executable
       run: dotnet publish --configuration Release -r ${{ matrix.runtime }} --self-contained -o ./publish /p:PublishTrimmed=true /p:TrimMode=link
 
+    - name: List Publish Directory (Debugging)
+      run: |
+        ls -R ./publish  # For Linux
+        # dir ./publish /s  # For Windows (uncomment if needed)
+
     - name: Clean Up Unnecessary Files (Windows)
       if: matrix.os == 'windows-latest'
       shell: pwsh
@@ -83,7 +88,8 @@ jobs:
     - name: Compress Executable with UPX (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        upx --best ./publish/cstutPantySmells  # Replace "cstutPantySmells" with the name of your executable
+        # Replace "cstutpusy1" with the actual name of your executable
+        upx --best ./publish/cstutpusy1  # Example: ./publish/MyApp
 
     - name: Install UPX (Windows)
       if: matrix.os == 'windows-latest'
@@ -99,18 +105,19 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        upx --best ./publish/cstutPantySmells.exe  # Replace "cstutPantySmells" with the name of your executable
+        # Replace "cstutpusy1" with the actual name of your executable
+        upx --best ./publish/cstutpusy1.exe  # Example: ./publish/MyApp.exe
 
     - name: Compress Artifacts (Windows)
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        Compress-Archive -Path ./publish/* -DestinationPath cstutPantySmells-windows.zip
+        Compress-Archive -Path ./publish/* -DestinationPath ConApp1Net8ActionBuildTest-windows.zip
 
     - name: Compress Artifacts (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        tar -czvf cstutPantySmells-linux.tar.gz -C ./publish .
+        tar -czvf ConApp1Net8ActionBuildTest-linux.tar.gz -C ./publish .
 
     - name: Clean Up (Optional)
       shell: pwsh  # Use PowerShell Core
@@ -124,10 +131,10 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: cstutPantySmells-${{ matrix.os }}
+        name: ConApp1Net8ActionBuildTest-${{ matrix.os }}
         path: |
-          cstutPantySmells-windows.zip
-          cstutPantySmells-linux.tar.gz
+          ConApp1Net8ActionBuildTest-windows.zip
+          ConApp1Net8ActionBuildTest-linux.tar.gz
 
   release:
     needs: build
@@ -145,12 +152,12 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: cstutPantySmells-v${{ github.run_number }}
-        name: cstutPantySmells Release v${{ github.run_number }}
+        tag_name: ConApp1Net8ActionBuildTest-v${{ github.run_number }}
+        name: ConApp1Net8ActionBuildTest Release v${{ github.run_number }}
         draft: false
         prerelease: false
         files: |
-          ./artifacts/cstutPantySmells-windows-latest/cstutPantySmells-windows.zip
-          ./artifacts/cstutPantySmells-ubuntu-latest/cstutPantySmells-linux.tar.gz
+          ./artifacts/ConApp1Net8ActionBuildTest-windows-latest/ConApp1Net8ActionBuildTest-windows.zip
+          ./artifacts/ConApp1Net8ActionBuildTest-ubuntu-latest/ConApp1Net8ActionBuildTest-linux.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
