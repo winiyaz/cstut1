@@ -83,7 +83,7 @@ jobs:
     - name: Compress Executable with UPX (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        upx --best ./publish/YourAppName  # Replace "YourAppName" with the name of your executable
+        upx --best ./publish/cstutPantySmells  # Replace "cstutPantySmells" with the name of your executable
 
     - name: Install UPX (Windows)
       if: matrix.os == 'windows-latest'
@@ -99,7 +99,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        upx --best ./publish/YourAppName.exe  # Replace "YourAppName" with the name of your executable
+        upx --best ./publish/cstutPantySmells.exe  # Replace "cstutPantySmells" with the name of your executable
 
     - name: Compress Artifacts (Windows)
       if: matrix.os == 'windows-latest'
