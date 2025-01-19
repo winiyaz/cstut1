@@ -52,8 +52,8 @@ jobs:
         path: TestResults/
       if: always()
 
-    - name: Publish Standalone Executable
-      run: dotnet publish --configuration Release -r ${{ matrix.runtime }} --self-contained -o ./publish /p:PublishTrimmed=true /p:TrimMode=link
+    - name: Publish Single File Executable
+      run: dotnet publish --configuration Release -r ${{ matrix.runtime }} --self-contained -o ./publish /p:PublishSingleFile=true /p:PublishTrimmed=true /p:TrimMode=link
 
     - name: List Publish Directory (Debugging)
       run: |
@@ -68,8 +68,6 @@ jobs:
         # Remove unnecessary files (e.g., .pdb, .xml)
         Remove-Item -Recurse -Force ./publish/*.pdb
         Remove-Item -Recurse -Force ./publish/*.xml
-        # Ensure only the executable and its dependencies remain
-        Get-ChildItem -Path ./publish -Exclude "*.exe", "*.dll", "*.so", "*.dylib", "*.json", "*.config" | Remove-Item -Recurse -Force
 
     - name: Clean Up Unnecessary Files (Linux)
       if: matrix.os == 'ubuntu-latest'
@@ -77,8 +75,6 @@ jobs:
         # Remove unnecessary files (e.g., .pdb, .xml)
         find ./publish -name "*.pdb" -delete
         find ./publish -name "*.xml" -delete
-        # Ensure only the executable and its dependencies remain
-        find ./publish -type f ! -name "*.exe" ! -name "*.dll" ! -name "*.so" ! -name "*.dylib" ! -name "*.json" ! -name "*.config" -delete
 
     - name: Compress Artifacts (Windows)
       if: matrix.os == 'windows-latest'
