@@ -112,12 +112,12 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        Compress-Archive -Path ./publish/* -DestinationPath ConApp1Net8ActionBuildTest-windows.zip
+        Compress-Archive -Path ./publish/* -DestinationPath cstutpusy1-windows.zip
 
     - name: Compress Artifacts (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        tar -czvf ConApp1Net8ActionBuildTest-linux.tar.gz -C ./publish .
+        tar -czvf cstutpusy1-linux.tar.gz -C ./publish .
 
     - name: Clean Up (Optional)
       shell: pwsh  # Use PowerShell Core
@@ -131,10 +131,10 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ConApp1Net8ActionBuildTest-${{ matrix.os }}
+        name: cstutpusy1-${{ matrix.os }}
         path: |
-          ConApp1Net8ActionBuildTest-windows.zip
-          ConApp1Net8ActionBuildTest-linux.tar.gz
+          cstutpusy1-windows.zip
+          cstutpusy1-linux.tar.gz
 
   release:
     needs: build
@@ -152,12 +152,12 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ConApp1Net8ActionBuildTest-v${{ github.run_number }}
-        name: ConApp1Net8ActionBuildTest Release v${{ github.run_number }}
+        tag_name: cstutpusy1-v${{ github.run_number }}
+        name: cstutpusy1 Release v${{ github.run_number }}
         draft: false
         prerelease: false
         files: |
-          ./artifacts/ConApp1Net8ActionBuildTest-windows-latest/ConApp1Net8ActionBuildTest-windows.zip
-          ./artifacts/ConApp1Net8ActionBuildTest-ubuntu-latest/ConApp1Net8ActionBuildTest-linux.tar.gz
+          ./artifacts/cstutpusy1-windows-latest/cstutpusy1-windows.zip
+          ./artifacts/cstutpusy1-ubuntu-latest/cstutpusy1-linux.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
