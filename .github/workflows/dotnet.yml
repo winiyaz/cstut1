@@ -61,6 +61,11 @@ jobs:
         ls -R ./publish  # For Linux
         # dir ./publish /s  # For Windows (uncomment if needed)
 
+    - name: Ensure Execute Permissions (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        chmod +x ./publish/cstut1
+
     - name: Clean Up Unnecessary Files (Windows)
       if: matrix.os == 'windows-latest'
       shell: pwsh
@@ -89,11 +94,11 @@ jobs:
     - name: Compress Executable with UPX (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        # Use the correct executable name (cstut1)
-        if [ -f "./publish/cstut1" ]; then
-          upx --best ./publish/cstut1
+        # Use the absolute path to the executable
+        if [ -f "$GITHUB_WORKSPACE/publish/cstut1" ]; then
+          upx --best "$GITHUB_WORKSPACE/publish/cstut1"
         else
-          echo "Error: Executable './publish/cstut1' not found!"
+          echo "Error: Executable '$GITHUB_WORKSPACE/publish/cstut1' not found!"
           exit 1
         fi
 
@@ -111,11 +116,11 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        # Use the correct executable name (cstut1.exe)
-        if (Test-Path -Path "./publish/cstut1.exe") {
-          upx --best ./publish/cstut1.exe
+        # Use the absolute path to the executable
+        if (Test-Path -Path "$env:GITHUB_WORKSPACE\publish\cstut1.exe") {
+          upx --best "$env:GITHUB_WORKSPACE\publish\cstut1.exe"
         } else {
-          Write-Host "Error: Executable './publish/cstut1.exe' not found!"
+          Write-Host "Error: Executable '$env:GITHUB_WORKSPACE\publish\cstut1.exe' not found!"
           exit 1
         }
 
