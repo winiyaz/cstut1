@@ -57,6 +57,7 @@ jobs:
 
     - name: List Publish Directory (Debugging)
       run: |
+        echo "Contents of ./publish:"
         ls -R ./publish  # For Linux
         # dir ./publish /s  # For Windows (uncomment if needed)
 
@@ -89,7 +90,12 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         # Use the correct executable name (cstut1)
-        upx --best ./publish/cstut1  # Example: ./publish/cstut1
+        if [ -f "./publish/cstut1" ]; then
+          upx --best ./publish/cstut1
+        else
+          echo "Error: Executable './publish/cstut1' not found!"
+          exit 1
+        fi
 
     - name: Install UPX (Windows)
       if: matrix.os == 'windows-latest'
@@ -106,7 +112,12 @@ jobs:
       shell: pwsh
       run: |
         # Use the correct executable name (cstut1.exe)
-        upx --best ./publish/cstut1.exe  # Example: ./publish/cstut1.exe
+        if (Test-Path -Path "./publish/cstut1.exe") {
+          upx --best ./publish/cstut1.exe
+        } else {
+          Write-Host "Error: Executable './publish/cstut1.exe' not found!"
+          exit 1
+        }
 
     - name: Compress Artifacts (Windows)
       if: matrix.os == 'windows-latest'
