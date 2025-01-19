@@ -88,8 +88,8 @@ jobs:
     - name: Compress Executable with UPX (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        # Replace "cstutpusy1" with the actual name of your executable
-        upx --best ./publish/cstutpusy1  # Example: ./publish/MyApp
+        # Use the correct executable name (cstut1)
+        upx --best ./publish/cstut1  # Example: ./publish/cstut1
 
     - name: Install UPX (Windows)
       if: matrix.os == 'windows-latest'
@@ -105,19 +105,19 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        # Replace "cstutpusy1" with the actual name of your executable
-        upx --best ./publish/cstutpusy1.exe  # Example: ./publish/MyApp.exe
+        # Use the correct executable name (cstut1.exe)
+        upx --best ./publish/cstut1.exe  # Example: ./publish/cstut1.exe
 
     - name: Compress Artifacts (Windows)
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        Compress-Archive -Path ./publish/* -DestinationPath cstutpusy1-windows.zip
+        Compress-Archive -Path ./publish/* -DestinationPath cstut1-windows.zip
 
     - name: Compress Artifacts (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        tar -czvf cstutpusy1-linux.tar.gz -C ./publish .
+        tar -czvf cstut1-linux.tar.gz -C ./publish .
 
     - name: Clean Up (Optional)
       shell: pwsh  # Use PowerShell Core
@@ -131,10 +131,10 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: cstutpusy1-${{ matrix.os }}
+        name: cstut1-${{ matrix.os }}
         path: |
-          cstutpusy1-windows.zip
-          cstutpusy1-linux.tar.gz
+          cstut1-windows.zip
+          cstut1-linux.tar.gz
 
   release:
     needs: build
@@ -152,12 +152,12 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: cstutpusy1-v${{ github.run_number }}
-        name: cstutpusy1 Release v${{ github.run_number }}
+        tag_name: cstut1-v${{ github.run_number }}
+        name: cstut1 Release v${{ github.run_number }}
         draft: false
         prerelease: false
         files: |
-          ./artifacts/cstutpusy1-windows-latest/cstutpusy1-windows.zip
-          ./artifacts/cstutpusy1-ubuntu-latest/cstutpusy1-linux.tar.gz
+          ./artifacts/cstut1-windows-latest/cstut1-windows.zip
+          ./artifacts/cstut1-ubuntu-latest/cstut1-linux.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
